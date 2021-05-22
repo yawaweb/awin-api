@@ -1,0 +1,29 @@
+{
+    "name": "yawaweb/awin-api",
+    "description": "Awin Api Client for publisher.",
+    "type": "library",
+	"homepage": "https://github.com/yawaweb/awin-api",
+	"keywords": [
+        "affiliate",
+        "awin",
+        "api",
+		"client"
+    ],
+    "require": {
+		"php": ">=7.4",
+        "nategood/httpful": "^0.2.20"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "yawaweb\\AwinApi\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ousama Yamine",
+            "email": "hello@yawaweb.com",
+            "homepage": "https://yawaweb.com"
+        }
+    ],
+}
