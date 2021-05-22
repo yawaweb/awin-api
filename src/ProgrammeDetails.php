@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * Awin API client for publisher
  *
