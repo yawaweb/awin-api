@@ -1,6 +1,7 @@
 {
     "name": "yawaweb/awin-api",
     "description": "Awin Api Client for publisher.",
+    "version": "1.0.2",
     "type": "library",
     "homepage": "https://github.com/yawaweb/awin-api",
     "keywords": [
