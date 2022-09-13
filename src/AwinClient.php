@@ -94,6 +94,22 @@ class AwinClient {
     }
 
     /**
+     * Check connection.
+     *
+     * @throws GuzzleException
+     */
+    public function checkConnection(): array
+    {
+        $response = $this->getActiveProgrammes();
+
+        if($response['status'] === true){
+            return ['status' => true];
+        }
+
+        return $response;
+    }
+
+    /**
      * Get all active programmes
      * @param null $countryCode
      * @return array
