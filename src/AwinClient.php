@@ -6,7 +6,7 @@
  * @author    Ousama Yamine <hello@yawaweb.com>
  * @copyright 2016-2021 Yawaweb <hello@yawaweb.com>
  * @license   http://opensource.org/licenses/MIT MIT Public
- * @version   1.0.2
+ * @version   1.0.3
  * @link      https://yawaweb.com
  *
  */
@@ -46,7 +46,7 @@ class AwinClient {
     protected array $commissionGroups = [];
 
     /**
-     * DaisyconClient constructor.
+     * Constructor.
      * @param $authToken   string Awin auth token
      * @param $publisherId integer Awin Publisher ID
      */
@@ -55,11 +55,16 @@ class AwinClient {
         $this->publisherId = $publisherId;
     }
 
+    //region CONNECTION & RESPONSE
     /**
      * Request
-     * @throws GuzzleException|JsonException
+     * @param string $resource
+     * @param array $params
+     * @return array
+     * @throws GuzzleException
+     * @throws JsonException
      */
-    protected function makeRequest($resource, $params = []): array
+    protected function makeRequest(string $resource, array $params = []): array
     {
         $client = new Client([
             'base_uri' => $this->endpoint
@@ -97,11 +102,13 @@ class AwinClient {
      * Check connection.
      *
      * @throws GuzzleException
+     * @throws JsonException
+     *
      * @since 1.0.2
      */
     public function checkConnection(): array
     {
-        $response = $this->getActiveProgrammes();
+        $response = $this->getProgrammes('joined');
 
         if($response['status'] === true){
             return ['status' => true];
@@ -111,16 +118,34 @@ class AwinClient {
     }
 
     /**
-     * Get all active programmes
-     * @param null $countryCode
-     * @return array
-     * @throws Exception
-     * @throws GuzzleException
+     * Debugger.
+     *
+     * @param $data
+     * @return string
+     *
+     * @since 1.0.3
      */
-    public function getActiveProgrammes($countryCode = null): array
+    public function debug($data): string
+    {
+        return '<pre>'.print_r($data, true).'</pre>';
+    }
+    //endregion
+
+    //region PROGRAMMES
+    /**
+     * Get all programmes by relationship
+     * @param string|null $relationShip possible values are: <b>joined, pending, suspended, rejected, notjoined</b>
+     * @param string|null $countryCode
+     * @param bool $includeHidden
+     * @return array
+     * @throws GuzzleException
+     * @throws JsonException
+     * @since 1.0.3
+     */
+    public function getProgrammes(string $relationShip = null, string $countryCode = null): array
     {
         $response = $this->makeRequest("/publishers/$this->publisherId/programmes/", [
-            'relationship' => 'joined',
+            'relationship' => $relationShip,
             'countryCode' => $countryCode
         ]);
 
@@ -156,22 +181,26 @@ class AwinClient {
 
         return $response;
     }
+    //endregion
 
+    //region TRANSACTIONS
     /**
      * Get all transactions from $startDate until $endDate.
      *
-     * @param DateTime $startDate Start date
-     * @param DateTime $endDate End date
-     * @param string $timezone Awin timezone format, see http://wiki.awin.com/index.php/API_get_transactions_list
+     * @param string $startDate Start date Y-m-d
+     * @param string $endDate End date Y-m-d
+     * @param string $timezone Awin timezone format, possible values are:
+     * <b>Europe/Berlin, Europe/Paris, Europe/London, Europe/Dublin, Canada/Eastern Canada/Central,
+     * Canada/Mountain, Canada/Pacific, US/Eastern, US/Central, US/Mountain, US/Pacific, UTC</b>
      * @return array Transaction objects. Each part of a transaction is returned as a separate Transaction.
      * @throws Exception
      * @throws GuzzleException
      */
-    public function getTransactions(DateTime $startDate, DateTime $endDate, string $timezone = 'Europe/Paris'): array
+    public function getTransactions(string $startDate, string $endDate, string $timezone = 'Europe/Paris'): array
     {
         $response = $this->makeRequest("/publishers/$this->publisherId/transactions/", [
-            'startDate' => $startDate->format('Y-m-d\TH:i:s'),
-            'endDate'   => $endDate->format('Y-m-d\TH:i:s'),
+            'startDate' => $startDate.'T00:00:00',
+            'endDate'   => $endDate.'T00:00:00',
             'timezone'  => $timezone
         ]);
 
@@ -194,8 +223,9 @@ class AwinClient {
 
         return $transactions;
     }
+    //endregion
 
-
+    //region COMISSIONGROUPS
     /**
      * Get commission groups from an advertiser.
      *
@@ -250,4 +280,5 @@ class AwinClient {
 
         return $this->commissionGroups[$commissionGroupID] ?? null;
     }
+    //endregion
 }

@@ -6,7 +6,7 @@
  * @author    Ousama Yamine <hello@yawaweb.com>
  * @copyright 2016-2021 Yawaweb <hello@yawaweb.com>
  * @license   http://opensource.org/licenses/MIT MIT Public
- * @version   1.0.2
+ * @version   1.0.3
  * @link      https://yawaweb.com
  * @since     1.0.1
  */
@@ -30,14 +30,14 @@ class Programmes {
     public string $status;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $name;
+    public ?string $name;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $description;
+    public ?string $description;
 
     /**
      * @var string|null
@@ -45,14 +45,14 @@ class Programmes {
     public ?string $logoUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $clickThroughUrl;
+    public ?string $clickThroughUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $displayUrl;
+    public ?string $displayUrl;
 
     /**
      * @var string

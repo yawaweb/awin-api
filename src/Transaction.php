@@ -6,7 +6,7 @@
  * @author    Ousama Yamine <hello@yawaweb.com>
  * @copyright 2016-2021 Yawaweb <hello@yawaweb.com>
  * @license   http://opensource.org/licenses/MIT MIT Public
- * @version   1.0.2
+ * @version   1.0.3
  * @link      https://yawaweb.com
  *
  */
@@ -19,108 +19,108 @@ class Transaction {
     /**
      * @var string
      */
-    public $id;
+    public string $id;
 
 
     /**
-     * @var DateTime
+     * @var string|null
      */
-    public $transactionDate;
+    public null|string $transactionDate;
 
     /**
-     * @var DateTime
+     * @var string|null
      */
-    public $clickDate;
+    public ?string $clickDate;
 
     /**
-     * @var DateTime
+     * @var string|null
      */
-    public $validationDate;
-
-    /**
-     * @var string
-     */
-    public $advertiserId;
+    public ?string $validationDate;
 
     /**
      * @var string
      */
-    public $clickDevice;
+    public string $advertiserId;
+
+    /**
+     * @var string|null
+     */
+    public ?string $clickDevice;
+
+    /**
+     * @var string|null
+     */
+    public ?string $transactionDevice;
 
     /**
      * @var string
      */
-    public $transactionDevice;
+    public string $commissionStatus;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $commissionStatus;
-
-    /**
-     * @var string
-     */
-    public $declineReason;
+    public ?string $declineReason;
 
     /**
      * @var string []
      */
-    public $clickRefs;
+    public array $clickRefs;
 
     /**
      * @var double Effective commission for this sale
      */
-    public $commissionAmount;
+    public float $commissionAmount;
 
     /**
      * @var double Total commission for this sale
      */
-    public $totalCommissionAmount;
+    public float $totalCommissionAmount;
 
     /**
      * @var boolean Whether the commission for this sale is shared with a service provider
      */
-    public $sharedCommission;
+    public bool $sharedCommission;
 
     /**
      * @var double Percentage of the total sale commission
      */
-    public $commissionPercentage;
+    public float $commissionPercentage;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $orderReference;
+    public ?string $orderReference;
 
     /**
      * @var double
      */
-    public $saleAmount;
+    public float $saleAmount;
 
     /**
      * @var string
      */
-    public $siteName;
+    public string $siteName;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $url;
+    public ?string $url;
 
     /**
      * @var boolean
      */
-    public $paid;
+    public bool $paid;
 
     /**
      * @var TransactionPart[]
      */
-    public $transactionParts = [];
+    public array $transactionParts = [];
 
     /**
      * @var string
      */
-    public $transactionType;
+    public string $transactionType;
 
     /**
      * Create a Transaction object from two JSON objects
@@ -130,33 +130,33 @@ class Transaction {
     public static function createFromJson($transData) {
         $transaction = new Transaction();
 
-        $transaction->id = $transData->id;
-        $transaction->transactionDate = self::parseDate($transData->transactionDate);
-        $transaction->clickDate = self::parseDate($transData->clickDate);
-        $transaction->validationDate = self::parseDate($transData->validationDate);
-        $transaction->advertiserId = $transData->advertiserId;
-        $transaction->clickDevice = $transData->clickDevice;
-        $transaction->transactionDevice = $transData->transactionDevice;
-        $transaction->commissionStatus = $transData->commissionStatus;
-        $transaction->declineReason = $transData->declineReason;
-        $transaction->clickRefs = (array)$transData->clickRefs;
-        $transaction->commissionAmount = $transData->commissionAmount->amount;
-        $transaction->orderReference = $transData->orderRef;
-        $transaction->saleAmount = $transData->saleAmount->amount;
-        $transaction->siteName = $transData->siteName;
-        $transaction->url = $transData->publisherUrl;
-        $transaction->paid = $transData->paidToPublisher;
-        $transaction->transactionType = $transData->type;
+        $transaction->id = $transData['id'];
+        $transaction->transactionDate = $transData['transactionDate'];
+        $transaction->clickDate = $transData['clickDate'];
+        $transaction->validationDate = $transData['validationDate'];
+        $transaction->advertiserId = $transData['advertiserId'];
+        $transaction->clickDevice = $transData['clickDevice'];
+        $transaction->transactionDevice = $transData['transactionDevice'];
+        $transaction->commissionStatus = $transData['commissionStatus'];
+        $transaction->declineReason = $transData['declineReason'];
+        $transaction->clickRefs = (array)$transData['clickRefs'];
+        $transaction->commissionAmount = $transData['commissionAmount']['amount'];
+        $transaction->orderReference = $transData['orderRef'];
+        $transaction->saleAmount = $transData['saleAmount']['amount'];
+        $transaction->siteName = $transData['siteName'];
+        $transaction->url = $transData['publisherUrl'];
+        $transaction->paid = $transData['paidToPublisher'];
+        $transaction->transactionType = $transData['type'];
 
         $transaction->totalCommissionAmount = 0;
 
         // Process transaction parts:
-        foreach ($transData->transactionParts as $transactionPartData) {
+        foreach ($transData['transactionParts'] as $transactionPartData) {
             $transactionPart = new TransactionPart();
 
-            $transactionPart->commissionGroupId = $transactionPartData->commissionGroupId;
-            $transactionPart->amount = $transactionPartData->amount;
-            $transactionPart->commissionAmount = $transactionPartData->commissionAmount;
+            $transactionPart->commissionGroupId = $transactionPartData['commissionGroupId'];
+            $transactionPart->amount = $transactionPartData['amount'];
+            $transactionPart->commissionAmount = $transactionPartData['commissionAmount'];
 
             // Add transaction part
             $transaction->transactionParts[] = $transactionPart;
@@ -175,18 +175,5 @@ class Transaction {
         }
 
         return $transaction;
-    }
-
-    /**
-     * Parse a date
-     * @param $date string Date/time string
-     * @return DateTime|null
-     */
-    private static function parseDate($date) {
-        if ($date == null) {
-            return null;
-        } else {
-            return new \DateTime($date);
-        }
     }
 }
